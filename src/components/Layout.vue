@@ -1,18 +1,26 @@
 <template>
   <div class="layout">
     <sidebar></sidebar>
-    <map></map>
+    <google-map></google-map>
   </div>
 </template>
 
 <script>
 import Sidebar from "./Sidebar";
+import GoogleMap from "./Map";
+
 export default {
   name: "Layout",
-  components: {Sidebar}
+  components: {Sidebar, GoogleMap}
 }
 </script>
 
-<style scoped>
-
+<style lang="scss" scoped>
+.layout {
+  display: flex;
+  height: 100vh;
+  .sidebar {
+    width: 30%;
+  }
+}
 </style>
