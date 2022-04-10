@@ -39,7 +39,7 @@ export default {
   },
   mounted() {
     EventBus.$on("grouping", ({groups, ungrouped}) => {
-      this.groups = groups;
+      this.groups = Object.values(groups);
       this.ungroupedPoints = Object.values(ungrouped);
     });
   }

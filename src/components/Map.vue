@@ -13,9 +13,10 @@ export default {
     return {
       points: [],
       distances: {},
-      groups: [],
+      groups: {},
       maxDistance: 0,
-      ungroupedPoints: {}
+      ungroupedPoints: {},
+      id: 0
     }
   },
   computed: {
@@ -41,6 +42,9 @@ export default {
     });
   },
   methods: {
+    generateGroupId() {
+      return this.id++;
+    },
     grouping() {
       for (let twoPoints in this.distances) {
         let point1 = this.points[twoPoints.split(":")[0]]
@@ -55,10 +59,10 @@ export default {
           continue;
         }
         if (!point1.isInGroup && !point2.isInGroup) {
-          let group = new Group(point1, point2, Group.generateGroupId(this.groups));
+          let group = new Group(point1, point2, this.generateGroupId());
           delete this.ungroupedPoints[point1.id];
           delete this.ungroupedPoints[point2.id];
-          this.groups.push(group);
+          this.groups[group.id] = group;
           continue;
         }
         if (!point1.isInGroup && point2.isInGroup) {
@@ -72,13 +76,15 @@ export default {
           continue;
         }
         if (point1.isInGroup && point2.isInGroup && !point1.isInSameGroup(point2)) {
+          let point2GroupId = point2.group.id;
           point1.group.concat(point2.group);
-          this.groups.splice(point2.group.id, 1);
+          delete this.groups[point2GroupId];
         }
       }
     },
     drawGroupsPolygons() {
-      for (let group of this.groups) {
+      for (let id in this.groups) {
+        let group = this.groups[id];
         if(group.polygon) {
           group.polygon.setMap(null);
         }
@@ -107,7 +113,7 @@ export default {
       let id = Point.generatePointId(this.points);
       let marker = new google.maps.Marker({
         position: location,
-        // label: id + "",
+        label: id + "",
         map,
       });
       let point = new Point(id, marker);

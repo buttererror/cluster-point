@@ -26,13 +26,11 @@ class Group {
     this.points.push(point);
   }
   concat(group) {
+    console.log("this", this)
+    console.log(group)
     for(let point of group.points) {
       this.add(point);
     }
-  }
-
-  static generateGroupId(groups) {
-    return groups.length;
   }
   #colors = [];
   #generateUniqueColor() {
