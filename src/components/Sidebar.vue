@@ -22,6 +22,7 @@
           <label>ungrouped</label>
         </div>
         <div v-for="point in ungroupedPoints" :key="point.id">
+          <div class="space"></div>
           <span class="point-name">{{point.name}}</span>
           <span>{{point.marker.getPosition().lat().toFixed(3)}}; {{point.marker.getPosition().lng().toFixed(3)}}</span>
         </div>
@@ -107,7 +108,7 @@ export default {
   display: flex;
   justify-content: flex-start;
   align-items: center;
-  width: 85px;
+  width: 120px;
   input[type="color"] {
     @include space(25px, 25px);
     border: 0;
