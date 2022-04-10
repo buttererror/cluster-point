@@ -25,6 +25,20 @@ class Point {
   static generatePointId(points) {
     return points.length;
   }
+  /* eslint-disable no-undef */
+  static shape = {
+    path: google.maps.SymbolPath.CIRCLE,
+    fillColor: "white",
+    fillOpacity: 1,
+    strokeWeight: 4,
+    strokeColor: "grey",
+    rotation: 0,
+    scale: 5,
+  };
+  static changeShapeColor(color) {
+    this.shape.strokeColor = color;
+    return this.shape;
+  }
 }
 
 export default Point;

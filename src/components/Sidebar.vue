@@ -5,8 +5,9 @@
     </h1>
     <div>
       <div v-for="group in groups" :key="group.id" class="group">
-        <div class="group-title">
-          <input type="color" :id="group.id" :value="group.color">
+        <div class="group-title" @click="groupClicked(group)">
+          <input type="color" :id="group.id"
+                 :value="group.color" @input="changePolygonColor">
           <label :for="group.id">Group</label>
         </div>
         <div v-for="point in group.points" :key="point.id">
@@ -31,12 +32,14 @@
 
 <script>
 import {EventBus} from "../js/Event";
+import Point from "../js/Point";
 export default {
   name: "Sidebar",
   data() {
     return {
       groups: [],
-      ungroupedPoints: []
+      ungroupedPoints: [],
+      group: {}
     }
   },
   computed: {
@@ -49,6 +52,21 @@ export default {
       this.groups = Object.values(groups);
       this.ungroupedPoints = Object.values(ungrouped);
     });
+  },
+  methods: {
+    groupClicked(group) {
+      this.group = group;
+    },
+    changePolygonColor(e) {
+      let color = e.target.value;
+      this.group.polygon.setOptions({
+        strokeColor: color,
+        fillColor: color,
+      });
+      for(let point of this.group.points) {
+        point.marker.setIcon(Point.changeShapeColor(color))
+      }
+    }
   }
 }
 </script>

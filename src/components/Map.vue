@@ -10,6 +10,7 @@ import {EventBus} from "../js/Event";
 export default {
   name: "Map",
   data() {
+    /* eslint-disable no-undef */
     return {
       points: [],
       distances: {},
@@ -21,7 +22,6 @@ export default {
   },
   computed: {
     map() {
-      /* eslint-disable no-undef */
       return new google.maps.Map(
           document.getElementById('map'),
           {zoom: 6, center: {lat: 23.8859, lng: 45.0792}}
@@ -119,6 +119,7 @@ export default {
       let marker = new google.maps.Marker({
         position: location,
         // label: id + "",
+        icon: Point.changeShapeColor("grey"),
         map,
       });
       let point = new Point(id, marker);
@@ -135,19 +136,10 @@ export default {
       }
     },
     drawPolygon(group, map) {
-      const circleShape = {
-        path: google.maps.SymbolPath.CIRCLE,
-        fillColor: "white",
-        fillOpacity: 1,
-        strokeWeight: 4,
-        strokeColor: group.color,
-        rotation: 0,
-        scale: 5,
-      };
-      let polygonAsLatLngLiteral = group.points.map((x) => {
-        x.marker.setIcon(circleShape);
-        x = x.marker.getPosition();
-        return x;
+      let polygonAsLatLngLiteral = group.points.map((point) => {
+        point.marker.setIcon(Point.changeShapeColor(group.color));
+        point = point.marker.getPosition();
+        return point;
       });
       let polygon = new google.maps.Polygon({
         strokeColor: group.color,
@@ -159,7 +151,7 @@ export default {
       group.polygon = polygon;
       polygon.setMap(map)
       polygon.setPaths(polygonAsLatLngLiteral)
-    },
+    }
   }
 }
 </script>
