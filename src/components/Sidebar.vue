@@ -5,14 +5,21 @@
     </h1>
     <div>
       <div v-for="group in groups" :key="group.id" class="group">
-        <button>{{group.name}}</button>
+        <div class="group-title">
+          <input type="color" :id="group.id" :value="group.color">
+          <label :for="group.id">Group</label>
+        </div>
         <div v-for="point in group.points" :key="point.id">
+          <div class="space"></div>
           <span class="point-name">{{point.name}}</span>
           <span>{{point.marker.getPosition().lat().toFixed(3)}}; {{point.marker.getPosition().lng().toFixed(3)}}</span>
         </div>
       </div>
       <div class="group" v-if="hasUngroupedPoints">
-        <button>ungrouped</button>
+        <div class="group-title">
+          <div class="space"></div>
+          <label>ungrouped</label>
+        </div>
         <div v-for="point in ungroupedPoints" :key="point.id">
           <span class="point-name">{{point.name}}</span>
           <span>{{point.marker.getPosition().lat().toFixed(3)}}; {{point.marker.getPosition().lng().toFixed(3)}}</span>
@@ -47,6 +54,14 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@mixin space($width, $height) {
+  width: #{$width};
+  height: #{$height};
+  margin-right: 10px;
+  background-color: transparent;
+  display: inline-block;
+}
+
 .group {
   display: flex;
   justify-content: start;
@@ -68,5 +83,26 @@ export default {
 .point-name {
   font-weight: 700;
   margin-right: 10px
+}
+
+.group-title {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  width: 85px;
+  input[type="color"] {
+    @include space(25px, 25px);
+    border: 0;
+    cursor: pointer;
+  }
+  label {
+    font-weight: 600;
+    line-height: 25px;
+    vertical-align: middle;
+    cursor: pointer;
+  }
+}
+.space {
+  @include space(25px, 18px);
 }
 </style>
