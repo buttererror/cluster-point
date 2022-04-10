@@ -19,8 +19,5 @@ export default {
 .layout {
   display: flex;
   height: 100vh;
-  .sidebar {
-    width: 30%;
-  }
 }
 </style>

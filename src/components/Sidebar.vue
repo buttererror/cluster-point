@@ -1,8 +1,17 @@
 <template>
-  <div class="sidebar">
-    <h1>
-      Groups
-    </h1>
+  <div class="sidebar opened">
+    <div class="sidebar-title">
+      <div class="space"></div>
+      <div>
+        <h1>
+          Groups
+        </h1>
+        <button @click="toggleSidebar" v-if="canToggleSidebar">
+          <span v-if="isSidebarOpened">Close</span>
+          <span v-else>Open</span>
+        </button>
+      </div>
+    </div>
     <div>
       <div v-for="group in groups" :key="group.id" class="group">
         <div class="group-title" @click="groupClicked(group)">
@@ -40,21 +49,42 @@ export default {
     return {
       groups: [],
       ungroupedPoints: [],
-      group: {}
+      group: {},
+      windowWidth: 0,
+      isSidebarOpened: true
     }
   },
   computed: {
     hasUngroupedPoints() {
       return !!Object.values(this.ungroupedPoints).length;
+    },
+    canToggleSidebar() {
+      return this.windowWidth < 1200
     }
   },
   mounted() {
+    this.windowWidth = window.innerWidth;
+    console.log(this.windowWidth)
+    window.onresize = () => {
+      this.windowWidth = window.innerWidth;
+    };
     EventBus.$on("grouping", ({groups, ungrouped}) => {
       this.groups = Object.values(groups);
       this.ungroupedPoints = Object.values(ungrouped);
     });
   },
   methods: {
+    toggleSidebar() {
+      if(this.isSidebarOpened) {
+        document.querySelector(".sidebar").classList.add("closed");
+        document.querySelector(".sidebar").classList.remove("opened");
+        this.isSidebarOpened = false;
+        return;
+      }
+      document.querySelector(".sidebar").classList.add("opened");
+      document.querySelector(".sidebar").classList.remove("closed");
+      this.isSidebarOpened = true;
+    },
     groupClicked(group) {
       this.group = group;
     },
@@ -68,7 +98,7 @@ export default {
         point.marker.setIcon(Point.changeShapeColor(this.group.color))
       }
     }
-  }
+  },
 }
 </script>
 
@@ -79,6 +109,38 @@ export default {
   margin-right: 10px;
   background-color: transparent;
   display: inline-block;
+}
+.sidebar {
+  position: absolute;
+  left: 0;
+  z-index: 100000000000000;
+  height: 100vh;
+  background: #ffffff;
+  box-shadow: -11px 28px 34px 0 rgba(0, 0, 0, 0.75);
+  width: 300px;
+  transition: all 0.2s ease-in;
+  &.closed {
+    transform: translateX(-300px);
+    button {
+      position: absolute;
+      left: 310px;
+      top: 60px;
+    }
+  }
+  &.opened {
+    transform: translateX(0);
+  }
+}
+@media screen and (min-width: 1200px){
+  .sidebar {
+    position: relative;
+    background: transparent;
+    box-shadow: none;
+    width: 30%;
+  }
+  .sidebar-title {
+    justify-content: flex-start !important;
+  }
 }
 
 .group {
@@ -123,5 +185,27 @@ export default {
 }
 .space {
   @include space(25px, 18px);
+}
+
+.sidebar-title {
+  display: flex;
+  > div:last-child {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-right: 10px;
+    width: 100%;
+  }
+
+  button {
+    background: #000000;
+    border: 0;
+    cursor: pointer;
+    font-weight: 600;
+    height: 30px;
+    border-radius: 3px;
+    color: #ffffff;
+    transition: all 0.2s ease-in;
+  }
 }
 </style>
