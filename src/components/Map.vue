@@ -50,11 +50,9 @@ export default {
           this.ungroupedPoints[point2.id] = point2;
         }
         if(this.distances[twoPoints] >= this.ruleDistance) {
-          console.log("greater", point1.id, point2.id)
           continue;
         }
         if(!point1.isInGroup && !point2.isInGroup) {
-          console.log("a", point1.id, point2.id)
           let group = new Group(point1, point2, Group.generateGroupId(this.groups));
           delete this.ungroupedPoints[point1.id];
           delete this.ungroupedPoints[point2.id];
@@ -62,13 +60,11 @@ export default {
           continue;
         }
         if(!point1.isInGroup && point2.isInGroup) {
-          console.log("b", point1.id, point2.id)
           point2.group.add(point1);
           delete this.ungroupedPoints[point1.id];
           continue;
         }
         if(!point2.isInGroup && point1.isInGroup) {
-          console.log("c", point1.id, point2.id)
           point1.group.add(point2);
           delete this.ungroupedPoints[point2.id];
           continue;
