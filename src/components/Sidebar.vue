@@ -1,5 +1,5 @@
 <template>
-  <div class="sidebar opened">
+  <div class="sidebar" :class="{'closed': canToggleSidebar}">
     <div class="sidebar-title">
       <div class="space"></div>
       <div>
@@ -51,7 +51,7 @@ export default {
       ungroupedPoints: [],
       group: {},
       windowWidth: 0,
-      isSidebarOpened: true
+      isSidebarOpened: false
     }
   },
   computed: {
@@ -66,6 +66,9 @@ export default {
     this.windowWidth = window.innerWidth;
     console.log(this.windowWidth)
     window.onresize = () => {
+      if(window.innerWidth >= 1200) {
+        this.isSidebarOpened = false;
+      }
       this.windowWidth = window.innerWidth;
     };
     EventBus.$on("grouping", ({groups, ungrouped}) => {
