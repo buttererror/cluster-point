@@ -9,7 +9,6 @@ export default {
   name: "Map",
   data() {
     return {
-      id: 0,
       points: [],
       distances: {},
       groups: [],
@@ -33,7 +32,6 @@ export default {
     google.maps.event.addListener(this.map, "click", (event) => {
       this.addPoint(event.latLng, this.map);
       if(this.points.length > 8) {
-        this.groups = [];
         this.grouping();
       }
     });
@@ -75,37 +73,41 @@ export default {
         }
       }
     },
+    calculateMaxDistance(distanceKM, previousMaxDistance) {
+      this.maxDistance = distanceKM > previousMaxDistance ? distanceKM : previousMaxDistance;
+      return this.maxDistance;
+    },
+    collectDistances() {
+      let previousMaxDistance = 0;
+      let distanceKM = 0;
+      for(let holdPoint of this.points) {
+        let holdPointPosition = holdPoint.marker.getPosition();
+        for(let portablePoint of this.points) {
+          let portablePointPosition = portablePoint.marker.getPosition();
+          if(holdPoint.id >= portablePoint.id) continue;
+          distanceKM = Math.floor(google.maps.geometry.spherical.computeDistanceBetween(holdPointPosition, portablePointPosition) / 1000);
+          this.distances[holdPoint.id + ":" + portablePoint.id] = distanceKM;
+          previousMaxDistance = this.calculateMaxDistance(distanceKM, previousMaxDistance);
+        }
+      }
+    },
     addPoint(location, map) {
-      // Add the marker at the clicked location, and add the next-available label
-      // from the array of alphabetical characters.
-      let id = this.id++;
+      let id = Point.generatePointId(this.points);
       let marker = new google.maps.Marker({
         position: location,
         label: id + "",
         map,
       });
       let point = new Point(id, marker);
-      // let point = {
+      // point = {
       //   id,
       //   group: "",
       //   marker
-      // };
+      // }
       this.points.push(point)
-      let previousDistanceKM = 0;
-      let distanceKM = 0
-      this.maxDistance = 0;
-      if(this.points.length > 1) {
-        for(let holdPoint of this.points) {
-          let holdPointPosition = holdPoint.marker.getPosition();
-          for(let portablePoint of this.points) {
-            let portablePointPosition = portablePoint.marker.getPosition();
-            if(holdPoint.id >= portablePoint.id) continue;
-            distanceKM = Math.floor(google.maps.geometry.spherical.computeDistanceBetween(holdPointPosition, portablePointPosition) / 1000);
-            this.maxDistance = distanceKM > previousDistanceKM ? distanceKM : previousDistanceKM;
-            this.distances[holdPoint.id + ":" + portablePoint.id] = distanceKM;
-            previousDistanceKM = this.maxDistance;
-          }
-        }
+      if(this.points.length > 8) {
+        this.maxDistance = 0;
+        this.collectDistances();
       }
     }
   }

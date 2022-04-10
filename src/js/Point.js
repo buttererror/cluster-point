@@ -16,7 +16,9 @@ class Point {
   isInSameGroup(point) {
     return this.group.name === point.group.name;
   }
-
+  static generatePointId(points) {
+    return points.length;
+  }
 }
 
 export default Point;
