@@ -77,17 +77,22 @@ export default {
         }
         if (point1.isInGroup && point2.isInGroup && !point1.isInSameGroup(point2)) {
           let point2GroupId = point2.group.id;
+          let point2GroupPolygon = point2.group.polygon;
           point1.group.concat(point2.group);
+          this.removePolygon(point2GroupPolygon);
           delete this.groups[point2GroupId];
         }
+      }
+    },
+    removePolygon(polygon) {
+      if (polygon) {
+        polygon.setMap(null);
       }
     },
     drawGroupsPolygons() {
       for (let id in this.groups) {
         let group = this.groups[id];
-        if(group.polygon) {
-          group.polygon.setMap(null);
-        }
+        this.removePolygon(group.polygon);
         this.drawPolygon(group, this.map);
       }
     },
@@ -113,7 +118,7 @@ export default {
       let id = Point.generatePointId(this.points);
       let marker = new google.maps.Marker({
         position: location,
-        label: id + "",
+        // label: id + "",
         map,
       });
       let point = new Point(id, marker);
@@ -145,7 +150,6 @@ export default {
         return x;
       });
       let polygon = new google.maps.Polygon({
-        paths: polygonAsLatLngLiteral,
         strokeColor: group.color,
         strokeOpacity: 1,
         strokeWeight: 2,
@@ -154,6 +158,7 @@ export default {
       });
       group.polygon = polygon;
       polygon.setMap(map)
+      polygon.setPaths(polygonAsLatLngLiteral)
     },
   }
 }
