@@ -25,7 +25,7 @@ export default {
     map() {
       return new google.maps.Map(
           document.getElementById('map'),
-          {zoom: 6, center: {lat: 23.8859, lng: 45.0792}}
+          {zoom: 8, center: {lat: 51.1657, lng: 10.4515}}
       );
     },
     ruleDistance() {
