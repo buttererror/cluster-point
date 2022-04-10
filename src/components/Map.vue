@@ -6,6 +6,7 @@
 import Group from "../js/Group";
 import Point from "../js/Point";
 import {EventBus} from "../js/Event";
+
 export default {
   name: "Map",
   data() {
@@ -32,8 +33,9 @@ export default {
   mounted() {
     google.maps.event.addListener(this.map, "click", (event) => {
       this.addPoint(event.latLng, this.map);
-      if(this.points.length > 8) {
+      if (this.points.length > 8) {
         this.grouping();
+        this.drawGroupsPolygons();
         EventBus.$emit("grouping", {groups: this.groups, ungrouped: this.ungroupedPoints})
       }
     });
@@ -43,36 +45,44 @@ export default {
       for (let twoPoints in this.distances) {
         let point1 = this.points[twoPoints.split(":")[0]]
         let point2 = this.points[twoPoints.split(":")[1]]
-        if(!point1.isInGroup) {
+        if (!point1.isInGroup) {
           this.ungroupedPoints[point1.id] = point1;
         }
-        if(!point2.isInGroup) {
+        if (!point2.isInGroup) {
           this.ungroupedPoints[point2.id] = point2;
         }
-        if(this.distances[twoPoints] >= this.ruleDistance) {
+        if (this.distances[twoPoints] >= this.ruleDistance) {
           continue;
         }
-        if(!point1.isInGroup && !point2.isInGroup) {
+        if (!point1.isInGroup && !point2.isInGroup) {
           let group = new Group(point1, point2, Group.generateGroupId(this.groups));
           delete this.ungroupedPoints[point1.id];
           delete this.ungroupedPoints[point2.id];
           this.groups.push(group);
           continue;
         }
-        if(!point1.isInGroup && point2.isInGroup) {
+        if (!point1.isInGroup && point2.isInGroup) {
           point2.group.add(point1);
           delete this.ungroupedPoints[point1.id];
           continue;
         }
-        if(!point2.isInGroup && point1.isInGroup) {
+        if (!point2.isInGroup && point1.isInGroup) {
           point1.group.add(point2);
           delete this.ungroupedPoints[point2.id];
           continue;
         }
-        if(point1.isInGroup && point2.isInGroup && !point1.isInSameGroup(point2)) {
+        if (point1.isInGroup && point2.isInGroup && !point1.isInSameGroup(point2)) {
           point1.group.concat(point2.group);
           this.groups.splice(point2.group.id, 1);
         }
+      }
+    },
+    drawGroupsPolygons() {
+      for (let group of this.groups) {
+        if(group.polygon) {
+          group.polygon.setMap(null);
+        }
+        this.drawPolygon(group, this.map);
       }
     },
     calculateMaxDistance(distanceKM, previousMaxDistance) {
@@ -82,11 +92,11 @@ export default {
     collectDistances() {
       let previousMaxDistance = 0;
       let distanceKM = 0;
-      for(let holdPoint of this.points) {
+      for (let holdPoint of this.points) {
         let holdPointPosition = holdPoint.marker.getPosition();
-        for(let portablePoint of this.points) {
+        for (let portablePoint of this.points) {
           let portablePointPosition = portablePoint.marker.getPosition();
-          if(holdPoint.id >= portablePoint.id) continue;
+          if (holdPoint.id >= portablePoint.id) continue;
           distanceKM = Math.floor(google.maps.geometry.spherical.computeDistanceBetween(holdPointPosition, portablePointPosition) / 1000);
           this.distances[holdPoint.id + ":" + portablePoint.id] = distanceKM;
           previousMaxDistance = this.calculateMaxDistance(distanceKM, previousMaxDistance);
@@ -97,7 +107,7 @@ export default {
       let id = Point.generatePointId(this.points);
       let marker = new google.maps.Marker({
         position: location,
-        label: id + "",
+        // label: id + "",
         map,
       });
       let point = new Point(id, marker);
@@ -108,11 +118,37 @@ export default {
       //   marker: Object
       // }
       this.points.push(point)
-      if(this.points.length > 8) {
+      if (this.points.length > 8) {
         this.maxDistance = 0;
         this.collectDistances();
       }
-    }
+    },
+    drawPolygon(group, map) {
+      const circleShape = {
+        path: google.maps.SymbolPath.CIRCLE,
+        fillColor: "white",
+        fillOpacity: 1,
+        strokeWeight: 4,
+        strokeColor: group.color,
+        rotation: 0,
+        scale: 5,
+      };
+      let polygonAsLatLngLiteral = group.points.map((x) => {
+        x.marker.setIcon(circleShape);
+        x = x.marker.getPosition();
+        return x;
+      });
+      let polygon = new google.maps.Polygon({
+        paths: polygonAsLatLngLiteral,
+        strokeColor: group.color,
+        strokeOpacity: 1,
+        strokeWeight: 2,
+        fillColor: group.color,
+        fillOpacity: 0.35
+      });
+      group.polygon = polygon;
+      polygon.setMap(map)
+    },
   }
 }
 </script>
