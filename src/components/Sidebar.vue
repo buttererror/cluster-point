@@ -59,13 +59,13 @@ export default {
       this.group = group;
     },
     changePolygonColor(e) {
-      let color = e.target.value;
+      this.group.color = e.target.value;
       this.group.polygon.setOptions({
-        strokeColor: color,
-        fillColor: color,
+        strokeColor: this.group.color,
+        fillColor: this.group.color,
       });
       for(let point of this.group.points) {
-        point.marker.setIcon(Point.changeShapeColor(color))
+        point.marker.setIcon(Point.changeShapeColor(this.group.color))
       }
     }
   }
