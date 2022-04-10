@@ -15,11 +15,13 @@
     <div class="sidebar-content">
       <div v-for="group in groups" :key="group.id" class="group">
         <div class="group-title" @click="groupClicked(group)">
+          <div class="space"></div>
           <input type="color" :id="group.id"
                  :value="group.color" @input="changePolygonColor">
           <label :for="group.id">Group</label>
         </div>
         <div v-for="point in group.points" :key="point.id">
+          <div class="space"></div>
           <div class="space"></div>
           <span class="point-name">{{ point.name }}</span>
           <span>{{ point.marker.getPosition().lat().toFixed(3) }}; {{ point.marker.getPosition().lng().toFixed(3) }}</span>
@@ -182,7 +184,7 @@ export default {
 
 .group {
   display: flex;
-  justify-content: start;
+  justify-content: flex-start;
   flex-direction: column;
   align-items: flex-start;
   font-size: 1rem;
