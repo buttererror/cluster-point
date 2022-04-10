@@ -17,7 +17,8 @@ export default {
       groups: {},
       maxDistance: 0,
       ungroupedPoints: {},
-      id: 0
+      id: 0,
+      pointDefaultColor: "#656668"
     }
   },
   computed: {
@@ -119,7 +120,7 @@ export default {
       let marker = new google.maps.Marker({
         position: location,
         // label: id + "",
-        icon: Point.changeShapeColor("#656668"),
+        icon: Point.changeShapeColor(this.pointDefaultColor),
         map,
       });
       let point = new Point(id, marker);

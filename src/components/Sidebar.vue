@@ -34,6 +34,7 @@
         </div>
         <div v-for="point in ungroupedPoints" :key="point.id">
           <div class="space"></div>
+          <div class="space"></div>
           <span class="point-name">{{ point.name }}</span>
           <span>{{ point.marker.getPosition().lat().toFixed(3) }}; {{ point.marker.getPosition().lng().toFixed(3) }}</span>
         </div>
