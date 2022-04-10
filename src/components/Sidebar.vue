@@ -140,7 +140,7 @@ export default {
   &.closed {
     transform: translateX(-300px);
 
-    button {
+    .sidebar-title button {
       position: absolute;
       left: 310px;
       top: 60px;
