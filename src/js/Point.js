@@ -31,7 +31,6 @@ class Point {
     fillColor: "white",
     fillOpacity: 1,
     strokeWeight: 4,
-    strokeColor: "grey",
     rotation: 0,
     scale: 5,
   };

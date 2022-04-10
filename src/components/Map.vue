@@ -119,7 +119,7 @@ export default {
       let marker = new google.maps.Marker({
         position: location,
         // label: id + "",
-        icon: Point.changeShapeColor("grey"),
+        icon: Point.changeShapeColor("#656668"),
         map,
       });
       let point = new Point(id, marker);
