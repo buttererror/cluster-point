@@ -12,7 +12,7 @@
         </button>
       </div>
     </div>
-    <div>
+    <div class="sidebar-content">
       <div v-for="group in groups" :key="group.id" class="group">
         <div class="group-title" @click="groupClicked(group)">
           <input type="color" :id="group.id"
@@ -21,8 +21,8 @@
         </div>
         <div v-for="point in group.points" :key="point.id">
           <div class="space"></div>
-          <span class="point-name">{{point.name}}</span>
-          <span>{{point.marker.getPosition().lat().toFixed(3)}}; {{point.marker.getPosition().lng().toFixed(3)}}</span>
+          <span class="point-name">{{ point.name }}</span>
+          <span>{{ point.marker.getPosition().lat().toFixed(3) }}; {{ point.marker.getPosition().lng().toFixed(3) }}</span>
         </div>
       </div>
       <div class="group" v-if="hasUngroupedPoints">
@@ -32,10 +32,14 @@
         </div>
         <div v-for="point in ungroupedPoints" :key="point.id">
           <div class="space"></div>
-          <span class="point-name">{{point.name}}</span>
-          <span>{{point.marker.getPosition().lat().toFixed(3)}}; {{point.marker.getPosition().lng().toFixed(3)}}</span>
+          <span class="point-name">{{ point.name }}</span>
+          <span>{{ point.marker.getPosition().lat().toFixed(3) }}; {{ point.marker.getPosition().lng().toFixed(3) }}</span>
         </div>
       </div>
+    </div>
+    <div class="sidebar-footer">
+      <div class="space"></div>
+      <button @click="clearMap">Clear points</button>
     </div>
   </div>
 </template>
@@ -43,6 +47,7 @@
 <script>
 import {EventBus} from "../js/Event";
 import Point from "../js/Point";
+
 export default {
   name: "Sidebar",
   data() {
@@ -66,7 +71,7 @@ export default {
     this.windowWidth = window.innerWidth;
     console.log(this.windowWidth)
     window.onresize = () => {
-      if(window.innerWidth >= 1200) {
+      if (window.innerWidth >= 1200) {
         this.isSidebarOpened = false;
       }
       this.windowWidth = window.innerWidth;
@@ -78,7 +83,7 @@ export default {
   },
   methods: {
     toggleSidebar() {
-      if(this.isSidebarOpened) {
+      if (this.isSidebarOpened) {
         document.querySelector(".sidebar").classList.add("closed");
         document.querySelector(".sidebar").classList.remove("opened");
         this.isSidebarOpened = false;
@@ -97,9 +102,14 @@ export default {
         strokeColor: this.group.color,
         fillColor: this.group.color,
       });
-      for(let point of this.group.points) {
+      for (let point of this.group.points) {
         point.marker.setIcon(Point.changeShapeColor(this.group.color))
       }
+    },
+    clearMap() {
+      this.groups = [];
+      this.ungroupedPoints = [];
+      EventBus.$emit("clear-map");
     }
   },
 }
@@ -113,6 +123,7 @@ export default {
   background-color: transparent;
   display: inline-block;
 }
+
 .sidebar {
   position: absolute;
   left: 0;
@@ -122,19 +133,42 @@ export default {
   box-shadow: -11px 28px 34px 0 rgba(0, 0, 0, 0.75);
   width: 300px;
   transition: all 0.2s ease-in;
+
   &.closed {
     transform: translateX(-300px);
+
     button {
       position: absolute;
       left: 310px;
       top: 60px;
     }
   }
+
   &.opened {
     transform: translateX(0);
   }
 }
-@media screen and (min-width: 1200px){
+
+.sidebar-content {
+  min-height: 85vh;
+  overflow: auto;
+}
+
+.sidebar-footer {
+  display: flex;
+  justify-content: flex-start;
+
+  button {
+    color: #6291F5;
+    border: 0;
+    padding: 10px;
+    background-color: #EDF3FE;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+}
+
+@media screen and (min-width: 1200px) {
   .sidebar {
     position: relative;
     background: transparent;
@@ -153,6 +187,7 @@ export default {
   align-items: flex-start;
   font-size: 1rem;
   margin-bottom: 10px;
+
   button {
     background-color: transparent;
     padding: 10px 20px 5px 0;
@@ -164,6 +199,7 @@ export default {
     display: inline-block;
   }
 }
+
 .point-name {
   font-weight: 700;
   margin-right: 10px
@@ -174,11 +210,13 @@ export default {
   justify-content: flex-start;
   align-items: center;
   width: 120px;
+
   input[type="color"] {
     @include space(25px, 25px);
     border: 0;
     cursor: pointer;
   }
+
   label {
     font-weight: 600;
     line-height: 25px;
@@ -186,12 +224,14 @@ export default {
     cursor: pointer;
   }
 }
+
 .space {
   @include space(25px, 18px);
 }
 
 .sidebar-title {
   display: flex;
+
   > div:last-child {
     display: flex;
     justify-content: space-between;

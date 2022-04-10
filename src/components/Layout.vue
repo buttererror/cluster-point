@@ -1,17 +1,36 @@
 <template>
   <div class="layout">
     <sidebar></sidebar>
-    <google-map></google-map>
+    <google-map v-if="isMap"></google-map>
   </div>
 </template>
 
 <script>
 import Sidebar from "./Sidebar";
 import GoogleMap from "./Map";
+import {EventBus} from "../js/Event";
 
 export default {
   name: "Layout",
-  components: {Sidebar, GoogleMap}
+  components: {Sidebar, GoogleMap},
+  data() {
+    return {
+      isMap: true
+    }
+  },
+  mounted() {
+    EventBus.$on("clear-map", () => {
+      this.rerenderMap();
+    });
+  },
+  methods: {
+    rerenderMap() {
+      this.isMap = false;
+      this.$nextTick(() => {
+        this.isMap = true;
+      });
+    }
+  }
 }
 </script>
 
