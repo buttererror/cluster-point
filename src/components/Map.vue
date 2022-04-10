@@ -5,6 +5,7 @@
 <script>
 import Group from "../js/Group";
 import Point from "../js/Point";
+import {EventBus} from "../js/Event";
 export default {
   name: "Map",
   data() {
@@ -33,6 +34,7 @@ export default {
       this.addPoint(event.latLng, this.map);
       if(this.points.length > 8) {
         this.grouping();
+        EventBus.$emit("grouping", {groups: this.groups, ungrouped: this.ungroupedPoints})
       }
     });
   },
@@ -100,9 +102,10 @@ export default {
       });
       let point = new Point(id, marker);
       // point = {
-      //   id,
-      //   group: "",
-      //   marker
+      //   id: Number,
+      //   name: String,
+      //   group: Group instance,
+      //   marker: Object
       // }
       this.points.push(point)
       if(this.points.length > 8) {
