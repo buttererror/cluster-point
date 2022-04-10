@@ -8,7 +8,7 @@ class Point {
     this.marker = marker;
     this.name = this.#generateRandomName();
   }
-  #names = ["Thor", "Loki", "Iron Man", "Doctor Strange", "Spider Man", "Captain America"];
+  #names = ["Thor", "Loki", "Iron Man", "Doctor Strange", "Spider Man", "Captain America", "Batman", "Cat woman"];
   #generateRandomName() {
     return this.#names[Math.floor(Math.random() * this.#names.length)]
   }
