@@ -99,11 +99,11 @@ export default {
       }
       this.windowWidth = window.innerWidth;
     };
-    EventBus.$on("grouping", ({groups, ungrouped}) => {
+    EventBus.$on("build-groups", ({groups, ungrouped}) => {
       this.groups = Object.values(groups);
       this.ungroupedPoints = Object.values(ungrouped);
     });
-    EventBus.$on("point-added", (ungrouped) => {
+    EventBus.$on("add-point", (ungrouped) => {
       this.ungroupedPoints = Object.values(ungrouped);
     });
   },

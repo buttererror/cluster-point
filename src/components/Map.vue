@@ -33,24 +33,32 @@ export default {
     },
     groupsColors() {
       return Object.values(this.groups).map(x => x.color);
+    },
+    isToBuildGroups() {
+      return this.points.length > 8
     }
   },
   mounted() {
     google.maps.event.addListener(this.map, "click", (event) => {
-      this.addPoint(event.latLng, this.map);
-      EventBus.$emit("point-added", this.ungroupedPoints);
-      if (this.points.length > 8) {
-        this.grouping();
-        this.drawGroupsPolygons();
-        EventBus.$emit("grouping", {groups: this.groups, ungrouped: this.ungroupedPoints})
-      }
+      this.addPoint(event.latLng, this.map).then((point) => {
+        this.points.push(point);
+        this.ungroupedPoints[point.id] = point;
+        EventBus.$emit("add-point", this.ungroupedPoints);
+        if (this.isToBuildGroups) {
+          this.maxDistance = 0;
+          this.collectDistances();
+          this.buildGroups();
+          this.drawGroupsPolygons();
+          EventBus.$emit("build-groups", {groups: this.groups, ungrouped: this.ungroupedPoints})
+        }
+      });
     });
   },
   methods: {
     generateGroupId() {
       return this.id++;
     },
-    grouping() {
+    buildGroups() {
       for (let twoPoints in this.distances) {
         let point1 = this.points[twoPoints.split(":")[0]]
         let point2 = this.points[twoPoints.split(":")[1]]
@@ -114,26 +122,23 @@ export default {
       }
     },
     addPoint(location, map) {
-      let id = Point.generatePointId(this.points);
-      let marker = new google.maps.Marker({
-        position: location,
-        // label: id + "",
-        icon: Point.changeShapeColor(this.pointDefaultColor),
-        map,
-      });
-      let point = new Point(id, marker);
       // point = {
       //   id: Number,
       //   name: String,
       //   group: Group instance,
       //   marker: Object
       // }
-      this.points.push(point);
-      this.ungroupedPoints[point.id] = point;
-      if (this.points.length > 8) {
-        this.maxDistance = 0;
-        this.collectDistances();
-      }
+      return new Promise((resolve) => {
+        let id = Point.generatePointId(this.points);
+        let marker = new google.maps.Marker({
+          position: location,
+          // label: id + "",
+          icon: Point.changeShapeColor(this.pointDefaultColor),
+          map,
+        });
+        let point = new Point(id, marker);
+        resolve(point);
+      });
     },
     drawPolygon(group, map) {
       let polygonAsLatLngLiteral = group.points.map((point) => {
