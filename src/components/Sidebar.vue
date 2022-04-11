@@ -20,7 +20,7 @@
                  :value="group.color">
           <label class="pointer" :for="group.id">Group</label>
         </div>
-        <div v-for="point in group.points" :key="point.id">
+        <div v-for="point in group.points" :key="point.id" class="group-item">
           <div class="space"></div>
           <div class="space"></div>
           <span class="point-name" :data-point-id="point.id" @click="enterEditMode"
@@ -29,7 +29,7 @@
                       @blur="$set(isEditingPointName, point.id, false)"
                       @enter="$set(isEditingPointName, point.id, false)"
                       v-else></form-input>
-          <span>{{ point.marker.getPosition().lat().toFixed(3) }}; {{
+          <span class="point-coordinates">{{ point.marker.getPosition().lat().toFixed(3) }}; {{
               point.marker.getPosition().lng().toFixed(3)
             }}</span>
         </div>
@@ -40,7 +40,7 @@
           <div class="space"></div>
           <label>ungrouped</label>
         </div>
-        <div v-for="point in ungroupedPoints" :key="point.id">
+        <div v-for="point in ungroupedPoints" :key="point.id" class="group-item">
           <div class="space"></div>
           <div class="space"></div>
           <span class="point-name" :data-point-id="point.id" @click="enterEditMode"
@@ -49,7 +49,7 @@
                       @blur="$set(isEditingPointName, point.id, false)"
                       @enter="$set(isEditingPointName, point.id, false)"
                       v-else></form-input>
-          <span>{{ point.marker.getPosition().lat().toFixed(3) }}; {{
+          <span class="point-coordinates">{{ point.marker.getPosition().lat().toFixed(3) }}; {{
               point.marker.getPosition().lng().toFixed(3)
             }}</span>
         </div>
@@ -153,6 +153,10 @@ export default {
   display: inline-block;
 }
 
+@mixin nowrapSpace {
+  white-space: nowrap;
+}
+
 .sidebar {
   position: absolute;
   left: 0;
@@ -182,6 +186,7 @@ export default {
   min-height: 85vh;
   max-height: 85vh;
   overflow: auto;
+  margin-right: 10px;
 }
 
 .sidebar-footer {
@@ -241,7 +246,12 @@ export default {
 
 .point-name {
   font-weight: 700;
-  margin-right: 10px
+  margin-right: 10px;
+  @include nowrapSpace;
+}
+
+.point-coordinates {
+  @include nowrapSpace;
 }
 
 .group-title {
@@ -265,7 +275,10 @@ export default {
     cursor: pointer;
   }
 }
-
+.group-item {
+  display: flex;
+  align-items: center;
+}
 .space {
   @include space(25px, 18px);
 }
