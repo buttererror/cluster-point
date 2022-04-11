@@ -172,6 +172,7 @@ export default {
 
 .sidebar-content {
   min-height: 85vh;
+  max-height: 85vh;
   overflow: auto;
 }
 
