@@ -42,7 +42,12 @@
         <div v-for="point in ungroupedPoints" :key="point.id">
           <div class="space"></div>
           <div class="space"></div>
-          <span class="point-name">{{ point.name }}</span>
+          <span class="point-name" :data-point-id="point.id" @click="enterEditMode"
+                v-if="!isEditingPointName[point.id]">{{ point.name }}</span>
+          <form-input v-model="point.name" :data-point-id="point.id" class="point-input"
+                      @blur="$set(isEditingPointName, point.id, false)"
+                      @enter="$set(isEditingPointName, point.id, false)"
+                      v-else></form-input>
           <span>{{ point.marker.getPosition().lat().toFixed(3) }}; {{
               point.marker.getPosition().lng().toFixed(3)
             }}</span>
@@ -96,6 +101,9 @@ export default {
     };
     EventBus.$on("grouping", ({groups, ungrouped}) => {
       this.groups = Object.values(groups);
+      this.ungroupedPoints = Object.values(ungrouped);
+    });
+    EventBus.$on("point-added", (ungrouped) => {
       this.ungroupedPoints = Object.values(ungrouped);
     });
   },

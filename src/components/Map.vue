@@ -38,6 +38,7 @@ export default {
   mounted() {
     google.maps.event.addListener(this.map, "click", (event) => {
       this.addPoint(event.latLng, this.map);
+      EventBus.$emit("point-added", this.ungroupedPoints);
       if (this.points.length > 8) {
         this.grouping();
         this.drawGroupsPolygons();
@@ -53,12 +54,6 @@ export default {
       for (let twoPoints in this.distances) {
         let point1 = this.points[twoPoints.split(":")[0]]
         let point2 = this.points[twoPoints.split(":")[1]]
-        if (!point1.isInGroup) {
-          this.ungroupedPoints[point1.id] = point1;
-        }
-        if (!point2.isInGroup) {
-          this.ungroupedPoints[point2.id] = point2;
-        }
         if (this.distances[twoPoints] >= this.ruleDistance) {
           continue;
         }
@@ -133,7 +128,8 @@ export default {
       //   group: Group instance,
       //   marker: Object
       // }
-      this.points.push(point)
+      this.points.push(point);
+      this.ungroupedPoints[point.id] = point;
       if (this.points.length > 8) {
         this.maxDistance = 0;
         this.collectDistances();
