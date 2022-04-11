@@ -9,17 +9,17 @@ class Group {
   constructor(point1, point2, id, color) {
     this.name = "g" + id;
     this.id = id;
-    this.add(point1)
-    this.add(point2)
+    this.addPoint(point1)
+    this.addPoint(point2)
     this.color = color
   }
-  add(point) {
+  addPoint(point) {
     point.group = this;
     this.points.push(point);
   }
-  concat(group) {
+  concatGroup(group) {
     for(let point of group.points) {
-      this.add(point);
+      this.addPoint(point);
     }
   }
 

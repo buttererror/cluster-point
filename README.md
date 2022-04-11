@@ -6,24 +6,18 @@ npm install
 ```
 
 ### Compiles and hot-reloads for development
+copy .env.example to .env.development.local 
 ```
 npm run serve
 ```
 
 ### Compiles and minifies for production
+copy .env.example to .env.production.local
 ```
 npm run build
-```
-
-### Run your unit tests
-```
-npm run test:unit
 ```
 
 ### Lints and fixes files
 ```
 npm run lint
 ```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).

@@ -45,8 +45,7 @@ export default {
         this.ungroupedPoints[point.id] = point;
         EventBus.$emit("add-point", this.ungroupedPoints);
         if (this.isToBuildGroups) {
-          this.maxDistance = 0;
-          this.collectDistances();
+          this.calculateDistances();
           this.buildGroups();
           this.drawGroupsPolygons();
           EventBus.$emit("build-groups", {groups: this.groups, ungrouped: this.ungroupedPoints})
@@ -62,7 +61,7 @@ export default {
       for (let twoPoints in this.distances) {
         let point1 = this.points[twoPoints.split(":")[0]]
         let point2 = this.points[twoPoints.split(":")[1]]
-        if (this.distances[twoPoints] >= this.ruleDistance) {
+        if (this.distances[twoPoints] >= this.ruleDistance || point1.isInSameGroup(point2)) {
           continue;
         }
         if (!point1.isInGroup() && !point2.isInGroup()) {
@@ -73,22 +72,20 @@ export default {
           continue;
         }
         if (!point1.isInGroup() && point2.isInGroup()) {
-          point2.group.add(point1);
+          point2.group.addPoint(point1);
           delete this.ungroupedPoints[point1.id];
           continue;
         }
         if (!point2.isInGroup() && point1.isInGroup()) {
-          point1.group.add(point2);
+          point1.group.addPoint(point2);
           delete this.ungroupedPoints[point2.id];
           continue;
         }
-        if (point1.isInGroup() && point2.isInGroup() && !point1.isInSameGroup(point2)) {
-          let point2GroupId = point2.group.id;
-          let point2GroupPolygon = point2.group.polygon;
-          point1.group.concat(point2.group);
-          this.removePolygon(point2GroupPolygon);
-          delete this.groups[point2GroupId];
-        }
+        let point2GroupId = point2.group.id;
+        let point2GroupPolygon = point2.group.polygon;
+        point1.group.concatGroup(point2.group);
+        this.removePolygon(point2GroupPolygon);
+        delete this.groups[point2GroupId];
       }
     },
     removePolygon(polygon) {
@@ -103,22 +100,19 @@ export default {
         group.drawPolygon(this.map);
       }
     },
-    calculateMaxDistance(distanceKM, previousMaxDistance) {
-      this.maxDistance = distanceKM > previousMaxDistance ? distanceKM : previousMaxDistance;
-      return this.maxDistance;
-    },
-    collectDistances() {
-      let previousMaxDistance = 0;
-      let distanceKM = 0;
-      for(let holdPointIndex = 0; holdPointIndex < this.points.length; holdPointIndex++) {
+    calculateDistances() {
+      this.maxDistance = 0;
+      for (let holdPointIndex = 0; holdPointIndex < this.points.length; holdPointIndex++) {
         let holdPoint = this.points[holdPointIndex];
         let holdPointPosition = holdPoint.marker.getPosition();
-        for(let portablePointIndex = holdPointIndex + 1; portablePointIndex < this.points.length; portablePointIndex++) {
+        for (let portablePointIndex = holdPointIndex + 1; portablePointIndex < this.points.length; portablePointIndex++) {
           let portablePoint = this.points[portablePointIndex];
           let portablePointPosition = portablePoint.marker.getPosition();
-          distanceKM = Math.floor(google.maps.geometry.spherical.computeDistanceBetween(holdPointPosition, portablePointPosition) / 1000);
+          let distanceKM = Math.floor(google.maps.geometry.spherical.computeDistanceBetween(holdPointPosition, portablePointPosition) / 1000);
           this.distances[holdPoint.id + ":" + portablePoint.id] = distanceKM;
-          previousMaxDistance = this.calculateMaxDistance(distanceKM, previousMaxDistance);
+          if (distanceKM > this.maxDistance) {
+            this.maxDistance = distanceKM;
+          }
         }
       }
     },

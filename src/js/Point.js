@@ -16,7 +16,10 @@ class Point {
     return this.group !== null;
   }
   isInSameGroup(point) {
-    return this.group.name === point.group.name;
+    if(this.group && point.group) {
+      return this.group.name === point.group.name;
+    }
+    return false;
   }
   static generatePointId(points) {
     return points.length;
