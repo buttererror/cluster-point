@@ -23,8 +23,15 @@
         <div v-for="point in group.points" :key="point.id">
           <div class="space"></div>
           <div class="space"></div>
-          <span class="point-name">{{ point.name }}</span>
-          <span>{{ point.marker.getPosition().lat().toFixed(3) }}; {{ point.marker.getPosition().lng().toFixed(3) }}</span>
+          <span class="point-name" :data-point-id="point.id" @click="enterEditMode"
+                v-if="!isEditingPointName[point.id]">{{ point.name }}</span>
+          <form-input v-model="point.name" :data-point-id="point.id" class="point-input"
+                      @blur="$set(isEditingPointName, point.id, false)"
+                      @enter="$set(isEditingPointName, point.id, false)"
+                      v-else></form-input>
+          <span>{{ point.marker.getPosition().lat().toFixed(3) }}; {{
+              point.marker.getPosition().lng().toFixed(3)
+            }}</span>
         </div>
       </div>
       <div class="group" v-if="hasUngroupedPoints">
@@ -36,7 +43,9 @@
           <div class="space"></div>
           <div class="space"></div>
           <span class="point-name">{{ point.name }}</span>
-          <span>{{ point.marker.getPosition().lat().toFixed(3) }}; {{ point.marker.getPosition().lng().toFixed(3) }}</span>
+          <span>{{ point.marker.getPosition().lat().toFixed(3) }}; {{
+              point.marker.getPosition().lng().toFixed(3)
+            }}</span>
         </div>
       </div>
     </div>
@@ -51,15 +60,18 @@
 import {EventBus} from "../js/Event";
 import Point from "../js/Point";
 import Group from "../js/Group";
+import FormInput from "./FormInput";
 
 export default {
   name: "Sidebar",
+  components: {FormInput},
   data() {
     return {
       groups: [],
       ungroupedPoints: [],
       windowWidth: 0,
-      isSidebarOpened: false
+      isSidebarOpened: false,
+      isEditingPointName: {}
     }
   },
   computed: {
@@ -113,6 +125,12 @@ export default {
       this.groups = [];
       this.ungroupedPoints = [];
       EventBus.$emit("clear-map");
+    },
+    enterEditMode(e) {
+      this.$set(this.isEditingPointName, e.target.dataset.pointId, true);
+      this.$nextTick(() => {
+        document.querySelector(`input[data-point-id='${e.target.dataset.pointId}']`).focus();
+      });
     }
   },
 }
@@ -200,6 +218,15 @@ export default {
     font-weight: 600;
     cursor: pointer;
     display: inline-block;
+  }
+  .point-input {
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-weight: 600;
+    font-size: 14px;
+    font-style: italic;
+    margin-right: 10px;
+    color: #565656;
   }
 }
 
