@@ -100,7 +100,7 @@ export default {
       for (let id in this.groups) {
         let group = this.groups[id];
         this.removePolygon(group.polygon);
-        this.drawPolygon(group, this.map);
+        group.drawPolygon(this.map);
       }
     },
     calculateMaxDistance(distanceKM, previousMaxDistance) {
@@ -139,23 +139,6 @@ export default {
         let point = new Point(id, marker);
         resolve(point);
       });
-    },
-    drawPolygon(group, map) {
-      let polygonAsLatLngLiteral = group.points.map((point) => {
-        point.marker.setIcon(Point.changeShapeColor(group.color));
-        point = point.marker.getPosition();
-        return point;
-      });
-      let polygon = new google.maps.Polygon({
-        strokeColor: group.color,
-        strokeOpacity: 1,
-        strokeWeight: 2,
-        fillColor: group.color,
-        fillOpacity: 0.35
-      });
-      group.polygon = polygon;
-      polygon.setMap(map)
-      polygon.setPaths(polygonAsLatLngLiteral)
     }
   }
 }
