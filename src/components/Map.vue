@@ -21,8 +21,6 @@ export default {
       pointDefaultColor: "#656668"
     }
   },
-  // group unique color
-  // change point name
   computed: {
     map() {
       return new google.maps.Map(
