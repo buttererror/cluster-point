@@ -92,7 +92,6 @@ export default {
   },
   mounted() {
     this.windowWidth = window.innerWidth;
-    console.log(this.windowWidth)
     window.onresize = () => {
       if (window.innerWidth >= 1200) {
         this.isSidebarOpened = false;
