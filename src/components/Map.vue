@@ -65,24 +65,24 @@ export default {
         if (this.distances[twoPoints] >= this.ruleDistance) {
           continue;
         }
-        if (!point1.isInGroup && !point2.isInGroup) {
+        if (!point1.isInGroup() && !point2.isInGroup()) {
           let group = new Group(point1, point2, this.generateGroupId(), Group.generateUniqueColor(this.groupsColors));
           delete this.ungroupedPoints[point1.id];
           delete this.ungroupedPoints[point2.id];
           this.groups[group.id] = group;
           continue;
         }
-        if (!point1.isInGroup && point2.isInGroup) {
+        if (!point1.isInGroup() && point2.isInGroup()) {
           point2.group.add(point1);
           delete this.ungroupedPoints[point1.id];
           continue;
         }
-        if (!point2.isInGroup && point1.isInGroup) {
+        if (!point2.isInGroup() && point1.isInGroup()) {
           point1.group.add(point2);
           delete this.ungroupedPoints[point2.id];
           continue;
         }
-        if (point1.isInGroup && point2.isInGroup && !point1.isInSameGroup(point2)) {
+        if (point1.isInGroup() && point2.isInGroup() && !point1.isInSameGroup(point2)) {
           let point2GroupId = point2.group.id;
           let point2GroupPolygon = point2.group.polygon;
           point1.group.concat(point2.group);

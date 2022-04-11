@@ -2,26 +2,16 @@ import Point from "./Point";
 
 class Group {
   points = [];
-  id = "";
-  color = "";
+  id = null;
+  color = null;
+  name = null;
+  polygon = null;
   constructor(point1, point2, id, color) {
     this.name = "g" + id;
     this.id = id;
     this.add(point1)
     this.add(point2)
     this.color = color
-  }
-  get name() {
-    return this._name;
-  }
-  set name(value) {
-    this._name = value;
-  }
-  get polygon() {
-    return this._polygon;
-  }
-  set polygon(value) {
-    this._polygon = value;
   }
   add(point) {
     point.group = this;

@@ -1,8 +1,8 @@
 class Point {
-  isInGroup = false;
-  id = "";
-  marker = "";
-  name = "";
+  id = null;
+  marker = null;
+  name = null;
+  group = null;
   constructor(id, marker) {
     this.id = id;
     this.marker = marker;
@@ -12,12 +12,8 @@ class Point {
   #generateRandomName() {
     return this.#names[Math.floor(Math.random() * this.#names.length)]
   }
-  get group () {
-    return this._group;
-  }
-  set group(value) {
-    this.isInGroup = true;
-    this._group = value;
+  isInGroup() {
+    return this.group !== null;
   }
   isInSameGroup(point) {
     return this.group.name === point.group.name;
