@@ -21,6 +21,8 @@ export default {
       pointDefaultColor: "#656668"
     }
   },
+  // group unique color
+  // change point name
   computed: {
     map() {
       return new google.maps.Map(
@@ -30,6 +32,9 @@ export default {
     },
     ruleDistance() {
       return this.maxDistance / 4;
+    },
+    groupsColors() {
+      return Object.values(this.groups).map(x => x.color);
     }
   },
   mounted() {
@@ -60,7 +65,7 @@ export default {
           continue;
         }
         if (!point1.isInGroup && !point2.isInGroup) {
-          let group = new Group(point1, point2, this.generateGroupId());
+          let group = new Group(point1, point2, this.generateGroupId(), Group.generateUniqueColor(this.groupsColors));
           delete this.ungroupedPoints[point1.id];
           delete this.ungroupedPoints[point2.id];
           this.groups[group.id] = group;

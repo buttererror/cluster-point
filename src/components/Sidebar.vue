@@ -14,10 +14,10 @@
     </div>
     <div class="sidebar-content">
       <div v-for="group in groups" :key="group.id" class="group">
-        <div class="group-title" @click="groupClicked(group)">
+        <div class="group-title" @click="changePolygonColor(group)">
           <div class="space"></div>
-          <input type="color" :id="group.id"
-                 :value="group.color" @input="changePolygonColor">
+          <input type="color" :id="group.id" disabled
+                 :value="group.color">
           <label :for="group.id">Group</label>
         </div>
         <div v-for="point in group.points" :key="point.id">
@@ -50,6 +50,7 @@
 <script>
 import {EventBus} from "../js/Event";
 import Point from "../js/Point";
+import Group from "../js/Group";
 
 export default {
   name: "Sidebar",
@@ -57,7 +58,6 @@ export default {
     return {
       groups: [],
       ungroupedPoints: [],
-      group: {},
       windowWidth: 0,
       isSidebarOpened: false
     }
@@ -68,6 +68,9 @@ export default {
     },
     canToggleSidebar() {
       return this.windowWidth < 1200
+    },
+    groupsColors() {
+      return this.groups.map(x => x.color);
     }
   },
   mounted() {
@@ -96,17 +99,14 @@ export default {
       document.querySelector(".sidebar").classList.remove("closed");
       this.isSidebarOpened = true;
     },
-    groupClicked(group) {
-      this.group = group;
-    },
-    changePolygonColor(e) {
-      this.group.color = e.target.value;
-      this.group.polygon.setOptions({
-        strokeColor: this.group.color,
-        fillColor: this.group.color,
+    changePolygonColor(group) {
+      group.color = Group.generateUniqueColor(this.groupsColors);
+      group.polygon.setOptions({
+        strokeColor: group.color,
+        fillColor: group.color,
       });
-      for (let point of this.group.points) {
-        point.marker.setIcon(Point.changeShapeColor(this.group.color))
+      for (let point of group.points) {
+        point.marker.setIcon(Point.changeShapeColor(group.color))
       }
     },
     clearMap() {
