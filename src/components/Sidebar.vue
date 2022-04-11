@@ -18,7 +18,7 @@
           <div class="space"></div>
           <input type="color" :id="group.id" disabled
                  :value="group.color">
-          <label :for="group.id">Group</label>
+          <label class="pointer" :for="group.id">Group</label>
         </div>
         <div v-for="point in group.points" :key="point.id">
           <div class="space"></div>
@@ -36,6 +36,7 @@
       </div>
       <div class="group" v-if="hasUngroupedPoints">
         <div class="group-title">
+          <div class="space"></div>
           <div class="space"></div>
           <label>ungrouped</label>
         </div>
@@ -247,7 +248,7 @@ export default {
   display: flex;
   justify-content: flex-start;
   align-items: center;
-  width: 120px;
+  min-width: 120px;
 
   input[type="color"] {
     @include space(25px, 25px);
@@ -259,6 +260,8 @@ export default {
     font-weight: 600;
     line-height: 25px;
     vertical-align: middle;
+  }
+  label.pointer {
     cursor: pointer;
   }
 }
