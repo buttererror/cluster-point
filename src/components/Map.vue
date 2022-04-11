@@ -110,11 +110,12 @@ export default {
     collectDistances() {
       let previousMaxDistance = 0;
       let distanceKM = 0;
-      for (let holdPoint of this.points) {
+      for(let holdPointIndex = 0; holdPointIndex < this.points.length; holdPointIndex++) {
+        let holdPoint = this.points[holdPointIndex];
         let holdPointPosition = holdPoint.marker.getPosition();
-        for (let portablePoint of this.points) {
+        for(let portablePointIndex = holdPointIndex + 1; portablePointIndex < this.points.length; portablePointIndex++) {
+          let portablePoint = this.points[portablePointIndex];
           let portablePointPosition = portablePoint.marker.getPosition();
-          if (holdPoint.id >= portablePoint.id) continue;
           distanceKM = Math.floor(google.maps.geometry.spherical.computeDistanceBetween(holdPointPosition, portablePointPosition) / 1000);
           this.distances[holdPoint.id + ":" + portablePoint.id] = distanceKM;
           previousMaxDistance = this.calculateMaxDistance(distanceKM, previousMaxDistance);
