@@ -2,7 +2,7 @@
   "name": "cluster-point",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://buttererror.github.io/cluster-point",
+  "homepage": "https://buttererror.github.io",
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
