@@ -3,6 +3,7 @@
 </template>
 
 <script>
+/* global google */
 import Group from "../js/Group";
 import Point from "../js/Point";
 import {EventBus} from "../js/Event";
@@ -10,7 +11,6 @@ import {EventBus} from "../js/Event";
 export default {
   name: "Map",
   data() {
-    /* eslint-disable no-undef */
     return {
       points: [],
       distances: {},
@@ -18,8 +18,8 @@ export default {
       maxDistance: 0,
       ungroupedPoints: {},
       id: 0,
-      pointDefaultColor: "#656668"
-    }
+      pointDefaultColor: "#656668",
+    };
   },
   computed: {
     map() {
@@ -48,7 +48,7 @@ export default {
           this.calculateDistances();
           this.buildGroups();
           this.drawGroupsPolygons();
-          EventBus.$emit("build-groups", {groups: this.groups, ungrouped: this.ungroupedPoints})
+          EventBus.$emit("build-groups", {groups: this.groups, ungrouped: this.ungroupedPoints});
         }
       });
     });
@@ -59,11 +59,13 @@ export default {
     },
     buildGroups() {
       for (let twoPoints in this.distances) {
-        let point1 = this.points[twoPoints.split(":")[0]]
-        let point2 = this.points[twoPoints.split(":")[1]]
+        let point1 = this.points[twoPoints.split(":")[0]];
+        let point2 = this.points[twoPoints.split(":")[1]];
+
         if (this.distances[twoPoints] >= this.ruleDistance || point1.isInSameGroup(point2)) {
           continue;
         }
+
         if (!point1.isInGroup() && !point2.isInGroup()) {
           let group = new Group(point1, point2, this.generateGroupId(), Group.generateUniqueColor(this.groupsColors));
           delete this.ungroupedPoints[point1.id];
@@ -108,8 +110,11 @@ export default {
         for (let portablePointIndex = holdPointIndex + 1; portablePointIndex < this.points.length; portablePointIndex++) {
           let portablePoint = this.points[portablePointIndex];
           let portablePointPosition = portablePoint.marker.getPosition();
-          let distanceKM = Math.floor(google.maps.geometry.spherical.computeDistanceBetween(holdPointPosition, portablePointPosition) / 1000);
+          let distanceKM = Math.floor(
+            google.maps.geometry.spherical.computeDistanceBetween(holdPointPosition, portablePointPosition) / 1000
+          );
           this.distances[holdPoint.id + ":" + portablePoint.id] = distanceKM;
+
           if (distanceKM > this.maxDistance) {
             this.maxDistance = distanceKM;
           }
@@ -117,17 +122,10 @@ export default {
       }
     },
     addPoint(location, map) {
-      // point = {
-      //   id: Number,
-      //   name: String,
-      //   group: Group instance,
-      //   marker: Object
-      // }
       return new Promise((resolve) => {
         let id = Point.generatePointId(this.points);
         let marker = new google.maps.Marker({
           position: location,
-          // label: id + "",
           icon: Point.changeShapeColor(this.pointDefaultColor),
           map,
         });

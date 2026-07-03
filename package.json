@@ -2,7 +2,11 @@
   "name": "cluster-point",
   "version": "0.1.0",
   "private": true,
+  "description": "Interactive Vue 2 frontend for clustering user-selected points on a Google Map.",
   "homepage": "https://buttererror.github.io/cluster-point",
+  "engines": {
+    "node": "14.18.0"
+  },
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
