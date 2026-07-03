@@ -4,6 +4,10 @@ Cluster Point is a Vue 2 frontend implementation for exploring point clustering 
 
 The app is intentionally focused on the frontend experience: map interaction, sidebar state, cluster visualization, and responsive layout behavior.
 
+## Purpose
+
+This repository is included as a frontend implementation task. It demonstrates my ability to understand requirements, structure Vue.js components, work with interactive map behavior, manage UI state, and present a complete user-facing feature within technical constraints.
+
 ## Screenshots
 
 ![Cluster Point initial map state](docs/screenshots/initial-map.png)
@@ -100,10 +104,18 @@ The project includes a GitHub Pages deployment script:
 npm run deploy
 ```
 
-A public live demo is not documented here because the deployed app requires a valid Google Maps API key. Once GitHub Pages is configured with a production key, the existing `homepage` value in `package.json` can be used as the live demo URL.
+## Live Demo
+
+A public live demo is not currently available because the app requires a valid Google Maps API key for production usage. The project is still documented with screenshots, setup instructions, and implementation notes so the behavior can be reviewed without exposing a production API key.
 
 ## Frontend Implementation Notes
 
 The main layout combines a sidebar and a full-height map view. The map owns point creation, distance calculation, group construction, and polygon rendering. The sidebar listens for point and group updates, then presents editable point names, coordinates, group colors, and reset controls.
 
 Point grouping starts after more than eight points exist. Distances are calculated with the Google Maps geometry library, and the grouping rule is derived from the maximum distance between placed points.
+
+## Limitations
+
+- This project uses Vue 2 and Vue CLI because it was built as an older frontend task.
+- The project depends on a Google Maps API key, so a public demo may not work without proper production API configuration.
+- The focus is frontend interaction, map behavior, clustering logic, and UI state management rather than backend functionality.
